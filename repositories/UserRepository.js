@@ -15,6 +15,19 @@ class UserRepository {
       );
     });
   }
+
+  getUserByEmailAndPassword(email, password) {
+    return new Promise((resolve, reject) => {
+      this._connection.query(
+        "SELECT * FROM users WHERE email = ? AND password = ?",
+        [email, password],
+        (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        }
+      );
+    });
+  }
 }
 
 module.exports = UserRepository;

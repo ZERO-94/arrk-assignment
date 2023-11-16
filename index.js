@@ -1,15 +1,18 @@
-var express = require("express");
-var app = express();
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const app = express();
 
 //setup dotenv
 require("dotenv").config();
 
+//set cookie
+app.use(cookieParser());
+
+//set view
 app.set("view engine", "ejs");
 
-// index page
-app.get("/", function (req, res) {
-  res.render("pages/index");
-});
+//routes
+require("./routes.js")(app);
 
 app.listen(8080);
 console.log("Server is listening on port 8080");

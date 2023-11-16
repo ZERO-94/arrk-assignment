@@ -22,6 +22,19 @@ class MessageRepository {
       );
     });
   }
+
+  getEmailList(email, page, limit) {
+    return new Promise((resolve, reject) => {
+      this._connection.query(
+        "SELECT DISTINCT sender FROM messages WHERE receiver = ? ORDER BY sendAt DESC LIMIT ? OFFSET ?",
+        [email, limit, (page - 1) * limit],
+        (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        }
+      );
+    });
+  }
 }
 
 module.exports = MessageRepository;
