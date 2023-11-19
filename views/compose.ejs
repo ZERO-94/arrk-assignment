@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+    <title>Node Authentication</title>
+    <style>
+        body         { padding-top:80px; }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="col-sm-6 col-sm-offset-3">
+
+    <h1><span class="fa fa-sign-in"></span> Compose email</h1>
+
+    <% if (typeof(error) !== "undefined" && error) { %>
+        <span style="color: red;"><%= error %></>
+    <% } %>
+
+    <form action="/compose-message" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Receiver</label>
+            <input type="text" class="form-control" name="receiver" value="<%= typeof(input) !== 'undefined' ? input.receiver : '' %>">
+        </div>
+        <div class="form-group">
+            <label>Subject</label>
+            <input type="text" class="form-control" name="subject" value="<%= typeof(input) !== 'undefined' ? input.subject : '' %>">
+        </div>
+        <div class="form-group">
+            <label>Content</label>
+            <textarea class="form-control" name="message" value="<%= typeof(input) !== 'undefined' ? input.message : '' %>"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-warning btn-lg">Send</button>
+    </form>
+
+</div>
+</div>
+</body>
+</html>

@@ -30,7 +30,7 @@ connection.query(
     //create message table if not exists with sender and reveiver as foreign key
 
     connection.query(
-      "CREATE TABLE IF NOT EXISTS messages (id INT AUTO_INCREMENT PRIMARY KEY, sender VARCHAR(255), receiver VARCHAR(255), message TEXT, sendAt DATETIME, readAt DATETIME, FOREIGN KEY (sender) REFERENCES users(email), FOREIGN KEY (receiver) REFERENCES users(email))",
+      "CREATE TABLE IF NOT EXISTS messages (id INT AUTO_INCREMENT PRIMARY KEY, sender VARCHAR(255), receiver VARCHAR(255), subject TEXT, message TEXT, sendAt DATETIME, readAt DATETIME, FOREIGN KEY (sender) REFERENCES users(email), FOREIGN KEY (receiver) REFERENCES users(email))",
       (err, result) => {
         if (err) throw err;
         console.log("Message table created successfully");
@@ -58,6 +58,7 @@ connection.query(
                 user1.email,
                 user2.email,
                 generateMessage(),
+                generateMessage(),
                 new Date(),
                 new Date()
               ),
@@ -65,18 +66,21 @@ connection.query(
                 user2.email,
                 user1.email,
                 generateMessage(),
+                generateMessage(),
                 new Date()
               ),
               new Message(
                 user1.email,
                 user3.email,
                 generateMessage(),
+                generateMessage(),
                 new Date()
               ),
               new Message(
                 user3.email,
                 user1.email,
                 generateMessage(),
+                null,
                 new Date(),
                 new Date()
               ),
@@ -84,18 +88,6 @@ connection.query(
                 user2.email,
                 user3.email,
                 generateMessage(),
-                new Date(),
-                new Date()
-              ),
-              new Message(
-                user3.email,
-                user2.email,
-                generateMessage(),
-                new Date()
-              ),
-              new Message(
-                user3.email,
-                user2.email,
                 generateMessage(),
                 new Date(),
                 new Date()
@@ -104,6 +96,22 @@ connection.query(
                 user3.email,
                 user2.email,
                 generateMessage(),
+                null,
+                new Date()
+              ),
+              new Message(
+                user3.email,
+                user2.email,
+                generateMessage(),
+                generateMessage(),
+                new Date(),
+                new Date()
+              ),
+              new Message(
+                user3.email,
+                user2.email,
+                generateMessage(),
+                null,
                 new Date()
               ),
             ];

@@ -1,11 +1,12 @@
 //create Mail class with constructor and getter setter for sender, receiver, message, sendAt, readAt
 class Message {
-  constructor(sender, receiver, message, sendAt, readAt) {
+  constructor(sender, receiver, subject, message, sendAt, readAt) {
     this._sender = sender;
     this._receiver = receiver;
     this._message = message;
     this._sendAt = sendAt;
     this._readAt = readAt;
+    this._subject = subject;
   }
 
   set sender(sender) {
@@ -46,6 +47,14 @@ class Message {
 
   get readAt() {
     return this._readAt;
+  }
+
+  get subject() {
+    return this._subject;
+  }
+
+  set subject(subject) {
+    this._subject = subject;
   }
 }
 

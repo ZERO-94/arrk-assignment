@@ -12,13 +12,16 @@
 <div class="container">
 <div class="col-sm-6 col-sm-offset-3">
 
-    <h1>Hello <%= typeof email !== "undefiend" && email ? email : "" %>, this is your inbox</h1>
+    
+    <h1>Hello <%= typeof email !== "undefiend" && email ? email : "" %>, this is your outbox</h1>
+    <div style="display: flex; width: 40rem; justify-content: space-evenly; margin-bottom: 2rem; margin-top: 2rem;">
     <a href="/compose-message">Compose message</a>
     <a href="/logout">Logout</a>
-    <a href="/outbox">Outbox</a>
+    <a href="/">Inbox</a>
+    </div>
     <table id="message-table">
         <tr>
-            <th>Sender</th>
+            <th>Receiver</th>
             <th>Subject</th>
             <th>Message</th>
             <th>Send at</th>
@@ -36,7 +39,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const queryString = window.location.search;
   const params = new URLSearchParams(queryString);
 
-  fetch("/api/messages?" +  new URLSearchParams({
+  fetch("/api/outbox?" +  new URLSearchParams({
     pageNumber: params.get('pageNumber'),
     pageSize: 5,
     })      
@@ -50,7 +53,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             const tableElemnt = document.getElementById("message-table");
             res.items.forEach(data => {
                 const row = document.createElement("tr");
-                const sender = document.createElement("td");
+                const receiver = document.createElement("td");
                 const subject = document.createElement("td");
                 const message = document.createElement("td");
                 const sendAt = document.createElement("td");
@@ -60,14 +63,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
                     //redirect to /message/:id
                     window.location.replace("/message/" + data.id);
                 })
-                sender.innerText = data.sender;
+                receiver.innerText = data.receiver;
                 subject.innerText = data.subject;
                 message.innerText = data.message;
                 sendAt.innerText = Intl.DateTimeFormat(undefined, {
                     timeStyle: "medium",
                     dateStyle: "medium",
                 }).format(new Date(data.sendAt));
-                row.appendChild(sender);
+                row.appendChild(receiver);
                 row.appendChild(subject);
                 row.appendChild(message);
                 row.appendChild(sendAt);
@@ -81,7 +84,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 const pageButton = document.createElement("button");
                 pageButton.innerText = i;
                 pageButton.addEventListener("click", () => {
-                    window.location.replace("/?pageNumber=" + i);
+                    window.location.replace("/outbox/?pageNumber=" + i);
                 })
                 paginationElement.appendChild(pageButton);
             }
