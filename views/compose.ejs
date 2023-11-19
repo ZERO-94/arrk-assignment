@@ -16,10 +16,23 @@
         <span style="color: red;"><%= error %></>
     <% } %>
 
+
     <form action="/compose-message" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label>Receiver</label>
-            <input type="text" class="form-control" name="receiver" value="<%= typeof(input) !== 'undefined' ? input.receiver : '' %>">
+            <select id="receiver" name="receiver">
+
+                <%
+                if(typeof emails !== "undefined" && emails) {
+                    for ( var i = 0; i < emails.length; i++ )
+                    {
+                        console.log(typeof(input) !== 'undefined' ? input.receiver : "ec");
+                        const selected = typeof(input) !== 'undefined' && input.receiver === emails[ i ] ? 'selected' : '';
+                        %><option class="form-control" value="<%=emails[ i ] %>" <%=selected %>><%=emails[ i ] %></option><%
+                    }
+                }
+                %>
+                </select>
         </div>
         <div class="form-group">
             <label>Subject</label>
@@ -27,7 +40,7 @@
         </div>
         <div class="form-group">
             <label>Content</label>
-            <textarea class="form-control" name="message" value="<%= typeof(input) !== 'undefined' ? input.message : '' %>"></textarea>
+            <textarea class="form-control" name="message"><%= typeof(input) !== 'undefined' ? input.message : '' %></textarea>
         </div>
 
         <button type="submit" class="btn btn-warning btn-lg">Send</button>

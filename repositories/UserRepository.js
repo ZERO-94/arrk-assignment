@@ -28,6 +28,28 @@ class UserRepository {
       );
     });
   }
+
+  getAllUsers() {
+    return new Promise((resolve, reject) => {
+      this._connection.query("SELECT * FROM users", (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  }
+
+  getUserByEmail(email) {
+    return new Promise((resolve, reject) => {
+      this._connection.query(
+        "SELECT * FROM users WHERE email = ?",
+        [email],
+        (err, result) => {
+          if (err) reject(err);
+          resolve(result[0]);
+        }
+      );
+    });
+  }
 }
 
 module.exports = UserRepository;

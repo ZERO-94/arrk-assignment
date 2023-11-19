@@ -60,7 +60,15 @@ module.exports = function (app) {
   });
 
   app.get("/compose-message", authHandler, function (req, res) {
-    res.render("compose.ejs");
+    const userRepository = new UserRepository(connection);
+
+    userRepository.getAllUsers().then((result) => {
+      res.render("compose.ejs", {
+        emails: result
+          .map((el) => el.email)
+          .filter((str) => str !== req.cookies.email),
+      });
+    });
   });
 
   app.get("/message/:id", authHandler, function (req, res) {
@@ -80,44 +88,82 @@ module.exports = function (app) {
 
   app.post("/compose-message", authHandler, upload.none(), function (req, res) {
     const messageRepository = new MessageRepository(connection);
+    const userRepository = new UserRepository(connection);
     const sender = req.cookies.email;
 
-    if (!req.body.subject) {
-      res.render("compose.ejs", {
-        error: "Subject is required",
-        input: req.body,
-      });
-      return;
-    }
-
-    if (!req.body.receiver) {
-      res.render("compose.ejs", {
-        error: "Receiver is required",
-        input: req.body,
-      });
-      return;
-    }
-
-    const newMessage = new Message(
-      sender,
-      req.body.receiver,
-      req.body.subject,
-      req.body.message,
-      new Date()
-    );
-
-    messageRepository
-      .createMessage(newMessage)
-      .then((result) => {
-        res.redirect("/");
-      })
-      .catch((err) => {
-        console.log("🚀 ~ file: routes.js:101 ~ err:", err);
+    userRepository.getAllUsers().then((users) => {
+      if (!req.body.subject) {
         res.render("compose.ejs", {
-          error: "Something went wrong",
-          input: req.body,
+          error: "Subject is required",
+          input: {
+            receiver: req.body.receiver,
+            subject: req.body.subject,
+            message: req.body.message,
+          },
+          emails: users
+            .map((el) => el.email)
+            .filter((str) => str !== req.cookies.email),
         });
+        return;
+      }
+
+      if (!req.body.receiver) {
+        res.render("compose.ejs", {
+          error: "Receiver is required",
+          input: {
+            receiver: req.body.receiver,
+            subject: req.body.subject,
+            message: req.body.message,
+          },
+          emails: users
+            .map((el) => el.email)
+            .filter((str) => str !== req.cookies.email),
+        });
+        return;
+      }
+
+      userRepository.getUserByEmail(req.body.receiver).then((result) => {
+        if (!result) {
+          res.render("compose.ejs", {
+            error: "Receiver does not exist",
+            input: {
+              receiver: req.body.receiver,
+              subject: req.body.subject,
+              message: req.body.message,
+            },
+            emails: users
+              .map((el) => el.email)
+              .filter((str) => str !== req.cookies.email),
+          });
+          return;
+        }
+
+        const newMessage = new Message(
+          sender,
+          req.body.receiver,
+          req.body.subject,
+          req.body.message,
+          new Date()
+        );
+
+        messageRepository
+          .createMessage(newMessage)
+          .then((result) => {
+            res.redirect("/");
+          })
+          .catch((err) => {
+            console.log("🚀 ~ file: routes.js:101 ~ err:", err);
+            res.render("compose.ejs", {
+              error: "Something went wrong",
+              input: {
+                receiver: req.body.receiver,
+                subject: req.body.subject,
+                message: req.body.message,
+              },
+            });
+          });
       });
+    });
   });
 
   app.get("/api/messages", authHandler, function (req, res) {
