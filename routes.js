@@ -24,7 +24,10 @@ module.exports = function (app) {
   app.get("/", authHandler, function (req, res) {
     res.render("index.ejs", { list: res, email: req.cookies.email });
   });
-
+ 
+  app.get("/signup", (req,res) => {
+    res.render('signup')
+  })
   app.get("/messages", authHandler, () => {
     res.send(res);
   });
