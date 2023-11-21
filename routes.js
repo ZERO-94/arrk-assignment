@@ -58,7 +58,7 @@ module.exports = function (app) {
         res.redirect("/");
       });
   });
-
+  
   app.get("/compose-message", authHandler, function (req, res) {
     const userRepository = new UserRepository(connection);
 
