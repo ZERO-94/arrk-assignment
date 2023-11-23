@@ -4,6 +4,8 @@ const UserRepository = require("./repositories/UserRepository");
 const MessageRepository = require("./repositories/MessageRepository");
 const connection = require("./db");
 const Message = require("./models/Message");
+const User = require("./models/User");
+
 
 const authHandler = (req, res, next) => {
   const isAuth = !!req.cookies.email;
@@ -25,9 +27,34 @@ module.exports = function (app) {
     res.render("index.ejs", { list: res, email: req.cookies.email });
   });
  
-  app.get("/signup", (req,res) => {
+  app.get("/signup", (req,res, next) => {
     res.render('signup')
   })
+  app.post('/signup', upload.none(), function(req,res) {
+    const inputData = {
+    fullName: req.body.fullName,
+    email:  req.body.email,
+    password: req.body.password,
+    confirm_password: req.body.confirm_password,
+    }
+    const userRepository = new UserRepository(connection)
+    userRepository
+      .getUserByEmail(inputData.email)
+      .then((result) => {
+        let msg = "";
+        if (result.length>0) {
+          msg = inputData.email + " was already exist";
+        } else if (inputData.password != inputData.confirm_password) {
+          msg = "Password and Confirm Password do not match";
+        } else {
+          const user = new User(inputData.fullName, inputData.email, inputData.password)
+          userRepository.createUser(user)
+          res.redirect("/");
+          res.render('login');
+        }
+        res.render('signup',{alertMsg: msg});
+      })
+});
   app.get("/messages", authHandler, () => {
     res.send(res);
   });
