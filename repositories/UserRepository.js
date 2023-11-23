@@ -45,7 +45,7 @@ class UserRepository {
         [email],
         (err, result) => {
           if (err) reject(err);
-          resolve(result[0]);
+          resolve(result);
         }
       );
     });
