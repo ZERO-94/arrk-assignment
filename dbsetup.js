@@ -7,8 +7,6 @@ const UserRepository = require("./repositories/UserRepository");
 const Message = require("./models/Message");
 const MessageRepository = require("./repositories/MessageRepository");
 
-console.log(process.env);
-
 function generateMessage() {
   const messages = [
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
