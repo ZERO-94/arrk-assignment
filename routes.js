@@ -5,6 +5,7 @@ const MessageRepository = require("./repositories/MessageRepository");
 const connection = require("./db");
 const Message = require("./models/Message");
 const User = require("./models/User");
+const { name } = require("ejs");
 
 
 const authHandler = (req, res, next) => {
@@ -24,7 +25,11 @@ const authHandler = (req, res, next) => {
 
 module.exports = function (app) {
   app.get("/", authHandler, function (req, res) {
-    res.render("index.ejs", { list: res, email: req.cookies.email });
+    const userRepository = new UserRepository(connection)
+    userRepository.getNameByEmail(req.cookies.email).then((value) => {
+      const nameName = Object.values(value)
+      res.render("index.ejs", { list: res, email: req.cookies.email, fullName: nameName});
+    })
   });
  
   app.get("/signup", (req,res, next) => {
@@ -39,20 +44,31 @@ module.exports = function (app) {
     }
     const userRepository = new UserRepository(connection)
     userRepository
-      .getUserByEmail(inputData.email)
+      .getAllUserByEmail(inputData.email)
       .then((result) => {
-        let msg = "";
-        if (result.length>0) {
-          msg = inputData.email + " was already exist";
+        if (!inputData.fullName||!inputData.email || !inputData.password || !inputData.confirm_password) {
+          res.render('signup', { 
+          error: 'Please fill in all fields' });
+        }else if (result.length>0) {
+          res.render('signup', {
+          error: "Email already exists",
+          input: inputData
+          });
         } else if (inputData.password != inputData.confirm_password) {
-          msg = "Password and Confirm Password do not match";
+          res.render('signup', {
+          error: "Password and Confirm password don't match",
+          input: inputData
+          });
+        } else if (inputData.password.length < 6){
+          res.render('signup', {
+          error: "Password must have 6 characters or more"
+          })
         } else {
-          const user = new User(inputData.fullName, inputData.email, inputData.password)
-          userRepository.createUser(user)
-          res.redirect("/");
-          res.render('login');
+          const new_user = new User(inputData.fullName, inputData.email, inputData.password)
+          userRepository.createUser(new_user)
+          res.cookie("email", inputData.email, { maxAge: 900000 });          
+          res.render('welcome', {user: new_user})
         }
-        res.render('signup',{alertMsg: msg});
       })
 });
   app.get("/messages", authHandler, () => {
@@ -207,7 +223,10 @@ module.exports = function (app) {
   });
 
   app.get("/outbox", authHandler, function (req, res) {
-    res.render("outbox.ejs", { email: req.cookies.email });
+    const userRepository = new UserRepository(connection)
+    userRepository.getNameByEmail(req.cookies.email).then((value) => {
+      res.render("outbox.ejs", { list: res, email: req.cookies.email, fullName: Object.values(value)});
+    })    
   });
 
   app.get("/api/outbox", authHandler, function (req, res) {

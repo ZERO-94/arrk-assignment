@@ -12,6 +12,9 @@
 </head>
 <body>
 <div class="container">
+    <% if (typeof(error) !== "undefined" && error) { %>
+        <span style="color: red;"><%= error %></>
+    <% } %>
     <h2>Register</h2>
     <form action="/signup" method = "post" enctype="multipart/form-data">
         <div class="form-group">

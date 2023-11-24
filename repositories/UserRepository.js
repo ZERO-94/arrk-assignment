@@ -45,6 +45,30 @@ class UserRepository {
         [email],
         (err, result) => {
           if (err) reject(err);
+          resolve(result[0]);
+        }
+      );
+    });
+  }
+  getNameByEmail(email) {
+    return new Promise((resolve, reject) => {
+      this._connection.query(
+        "SELECT fullName FROM users WHERE email = ?",
+        [email],
+        (err, result) => {
+          if (err) reject(err);
+          resolve(result[0]);
+        }
+      );
+    });
+  }
+  getAllUserByEmail(email) {
+    return new Promise((resolve, reject) => {
+      this._connection.query(
+        "SELECT * FROM users WHERE email = ?",
+        [email],
+        (err, result) => {
+          if (err) reject(err);
           resolve(result);
         }
       );
