@@ -71,68 +71,72 @@
 
 </div>
 </div>
-<!-- <script>
+<script>
+    
+    
+</script>
+// <!-- <script>
 
-document.addEventListener("DOMContentLoaded", (event) => {
-  console.log("DOM fully loaded and parsed");
-  const queryString = window.location.search;
-  const params = new URLSearchParams(queryString);
+// document.addEventListener("DOMContentLoaded", (event) => {
+//   console.log("DOM fully loaded and parsed");
+//   const queryString = window.location.search;
+//   const params = new URLSearchParams(queryString);
 
-  fetch("/api/outbox?" +  new URLSearchParams({
-    pageNumber: params.get('pageNumber'),
-    pageSize: 5,
-    })      
-    , {
-        method: "GET",
-        }).then(res => res.json()).then(res => {
-            //put the result into table with table id is "message-table"
-            //the table has 4 columns: receiver, subject, message, createdAt
-            // the table has button view
+//   fetch("/api/outbox?" +  new URLSearchParams({
+//     pageNumber: params.get('pageNumber'),
+//     pageSize: 5,
+//     })      
+//     , {
+//         method: "GET",
+//         }).then(res => res.json()).then(res => {
+//             //put the result into table with table id is "message-table"
+//             //the table has 4 columns: receiver, subject, message, createdAt
+//             // the table has button view
 
-            const tableElemnt = document.getElementById("message-table");
-            res.items.forEach(data => {
-                const row = document.createElement("tr");
-                const receiver = document.createElement("td");
-                const subject = document.createElement("td");
-                const message = document.createElement("td");
-                const sendAt = document.createElement("td");
-                const viewButton = document.createElement("button");
-                viewButton.innerText = "View";
-                viewButton.addEventListener("click", () => {
-                    //redirect to /message/:id
-                    window.location.replace("/message/" + data.id);
-                })
-                receiver.innerText = data.receiver;
-                subject.innerText = data.subject;
-                message.innerText = data.message;
-                sendAt.innerText = Intl.DateTimeFormat(undefined, {
-                    timeStyle: "medium",
-                    dateStyle: "medium",
-                }).format(new Date(data.sendAt));
-                row.appendChild(receiver);
-                row.appendChild(subject);
-                row.appendChild(message);
-                row.appendChild(sendAt);
-                row.appendChild(viewButton);
-                tableElemnt.appendChild(row);
-            })
+//             const tableElemnt = document.getElementById("message-table");
+//             res.items.forEach(data => {
+//                 const row = document.createElement("tr");
+//                 const receiver = document.createElement("td");
+//                 const subject = document.createElement("td");
+//                 const message = document.createElement("td");
+//                 const sendAt = document.createElement("td");
+//                 const viewButton = document.createElement("button");
+//                 viewButton.innerText = "View";
+//                 viewButton.addEventListener("click", () => {
+//                     //redirect to /message/:id
+//                     window.location.replace("/message/" + data.id);
+//                 })
+//                 receiver.innerText = data.receiver;
+//                 subject.innerText = data.subject;
+//                 message.innerText = data.message;
+//                 sendAt.innerText = Intl.DateTimeFormat(undefined, {
+//                     timeStyle: "medium",
+//                     dateStyle: "medium",
+//                 }).format(new Date(data.sendAt));
+//                 row.appendChild(receiver);
+//                 row.appendChild(subject);
+//                 row.appendChild(message);
+//                 row.appendChild(sendAt);
+//                 row.appendChild(viewButton);
+//                 tableElemnt.appendChild(row);
+//             })
 
-            //add pagination element with a list a number of page in div with id "pagination"
-            const paginationElement = document.getElementById("pagination");
-            for(let i = 1; i <= res.totalPage; i++) {
-                const pageButton = document.createElement("button");
-                pageButton.innerText = i;
-                pageButton.addEventListener("click", () => {
-                    window.location.replace("/outbox/?pageNumber=" + i);
-                })
-                paginationElement.appendChild(pageButton);
-            }
+//             //add pagination element with a list a number of page in div with id "pagination"
+//             const paginationElement = document.getElementById("pagination");
+//             for(let i = 1; i <= res.totalPage; i++) {
+//                 const pageButton = document.createElement("button");
+//                 pageButton.innerText = i;
+//                 pageButton.addEventListener("click", () => {
+//                     window.location.replace("/outbox/?pageNumber=" + i);
+//                 })
+//                 paginationElement.appendChild(pageButton);
+//             }
 
 
-        })
-});
+//         })
+// });
 
     
-</script> -->
+// </script> -->
 </body>
 </html>
