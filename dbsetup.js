@@ -30,7 +30,7 @@ connection.query(
     //create message table if not exists with sender and reveiver as foreign key
 
     connection.query(
-      "CREATE TABLE IF NOT EXISTS messages (id INT AUTO_INCREMENT PRIMARY KEY, sender VARCHAR(255), receiver VARCHAR(255), subject TEXT, message TEXT, sendAt DATETIME, readAt DATETIME, FOREIGN KEY (sender) REFERENCES users(email), FOREIGN KEY (receiver) REFERENCES users(email))",
+      "CREATE TABLE IF NOT EXISTS messages (id INT AUTO_INCREMENT PRIMARY KEY, sender VARCHAR(255), receiver VARCHAR(255), subject TEXT, message TEXT, sendAt DATETIME, readAt DATETIME, receiverDeleted BOOLEAN NOT NULL default 0, senderDeleted BOOLEAN NOT NULL default 0, FOREIGN KEY (sender) REFERENCES users(email), FOREIGN KEY (receiver) REFERENCES users(email))",
       (err, result) => {
         if (err) throw err;
         console.log("Message table created successfully");

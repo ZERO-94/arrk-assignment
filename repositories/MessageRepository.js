@@ -44,7 +44,7 @@ class MessageRepository {
       let pageNumber = parseInt(page, 10) || 1;
       let numPages;
       this._connection.query(
-        "SELECT count(*) as numRows FROM messages WHERE sender = ?",
+        "SELECT count(*) as numRows FROM messages WHERE sender = ? AND senderDeleted = 0",
         [sender],
         (err, results) => {
           console.log(
@@ -56,7 +56,7 @@ class MessageRepository {
           numPages = Math.ceil(numRows / numPerPage);
           console.log("number of pages:", numPages);
           this._connection.query(
-            "SELECT * FROM messages WHERE sender = ? ORDER BY sendAt DESC LIMIT ? OFFSET ?",
+            "SELECT * FROM messages WHERE sender = ? AND senderDeleted = 0 ORDER BY sendAt DESC LIMIT ? OFFSET ?",
             [sender, numPerPage, (pageNumber - 1) * numPerPage],
             (err, result) => {
               if (err) reject(err);
@@ -81,7 +81,7 @@ class MessageRepository {
       let pageNumber = parseInt(page, 10) || 1;
       let numPages;
       this._connection.query(
-        "SELECT count(*) as numRows FROM messages WHERE receiver = ?",
+        "SELECT count(*) as numRows FROM messages WHERE receiver = ? AND receiverDeleted = 0",
         [receiver],
         (err, results) => {
           console.log(
@@ -93,7 +93,7 @@ class MessageRepository {
           numPages = Math.ceil(numRows / numPerPage);
           console.log("number of pages:", numPages);
           this._connection.query(
-            "SELECT * FROM messages WHERE receiver = ? ORDER BY sendAt DESC LIMIT ? OFFSET ?",
+            "SELECT * FROM messages WHERE receiver = ? AND receiverDeleted = 0 ORDER BY sendAt DESC LIMIT ? OFFSET ?",
             [receiver, numPerPage, (pageNumber - 1) * numPerPage],
             (err, result) => {
               if (err) reject(err);
@@ -106,6 +106,32 @@ class MessageRepository {
               });
             }
           );
+        }
+      );
+    });
+  }
+
+  deleteListOfEmailByReceiverEmail(receiverEmail, emailList) {
+    return new Promise((resolve, reject) => {
+      this._connection.query(
+        "UPDATE messages SET receiverDeleted = 1 WHERE receiver = ? AND id IN (?)",
+        [receiverEmail, emailList],
+        (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        }
+      );
+    });
+  }
+
+  deleteListOfEmailBySenderEmail(senderEmail, emailList) {
+    return new Promise((resolve, reject) => {
+      this._connection.query(
+        "UPDATE messages SET senderDeleted = 1 WHERE sender = ? AND id IN (?)",
+        [senderEmail, emailList],
+        (err, result) => {
+          if (err) reject(err);
+          resolve(result);
         }
       );
     });

@@ -19,8 +19,13 @@
     <%
     if(typeof data !== "undefined" && data.items.length) {
         const items = data.items;
-        %><table id="message-table">
+        %>
+        <form id="delete-form">
+            <button type="submit">Delete</button>
+        <input name="deleteAction" value="receiver" hidden/>
+        <table id="message-table">
             <tr>
+                <th></th>
                 <th>Sender</th>
                 <th>Subject</th>
                 <th>Message</th>
@@ -31,7 +36,8 @@
         for ( var i = 0; i < items.length; i++ )
         {
             %>
-                <tr>
+                <tr id="row-<%= items[i].id %>">
+                    <td><input type="checkbox" id="<%= items[i].id %>" name="ids" value="<%= items[i].id %>"></td>
                     <td><%= items[i].sender %></td>
                     <td>
                         <a href="/message/<%= items[i].id %>"><%= items[i].subject %></a>
@@ -46,6 +52,7 @@
             <%
         } %>
         </table>
+        </form>
         <%
     }
     %>
@@ -69,68 +76,39 @@
 
 </div>
 </div>
-<!-- <script>
 
-document.addEventListener("DOMContentLoaded", (event) => {
-  console.log("DOM fully loaded and parsed");
-  const queryString = window.location.search;
-  const params = new URLSearchParams(queryString);
-
-  fetch("/api/messages?" +  new URLSearchParams({
-    pageNumber: params.get('pageNumber'),
-    pageSize: 5,
-    })      
-    , {
-        method: "GET",
-        }).then(res => res.json()).then(res => {
-            //put the result into table with table id is "message-table"
-            //the table has 4 columns: receiver, subject, message, createdAt
-            // the table has button view
-
-            const tableElemnt = document.getElementById("message-table");
-            res.items.forEach(data => {
-                const row = document.createElement("tr");
-                const sender = document.createElement("td");
-                const subject = document.createElement("td");
-                const message = document.createElement("td");
-                const sendAt = document.createElement("td");
-                const viewButton = document.createElement("button");
-                viewButton.innerText = "View";
-                viewButton.addEventListener("click", () => {
-                    //redirect to /message/:id
-                    window.location.replace("/message/" + data.id);
-                })
-                sender.innerText = data.sender;
-                subject.innerText = data.subject;
-                message.innerText = data.message;
-                sendAt.innerText = Intl.DateTimeFormat(undefined, {
-                    timeStyle: "medium",
-                    dateStyle: "medium",
-                }).format(new Date(data.sendAt));
-                row.appendChild(sender);
-                row.appendChild(subject);
-                row.appendChild(message);
-                row.appendChild(sendAt);
-                row.appendChild(viewButton);
-                tableElemnt.appendChild(row);
+<script>
+    document.addEventListener("DOMContentLoaded", (event) => {
+        const form = document.getElementById("delete-form");
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const ids = document.getElementsByName("ids");
+            const deleteAction = document.getElementsByName("deleteAction");
+            const data = {
+                ids: [],
+                deleteAction: deleteAction[0].value,
+            };
+            ids.forEach(id => {
+                if(id.checked) {
+                    data.ids.push(id.value);
+                }
             })
+            const params = new URLSearchParams();
+            params.set("action", data.deleteAction);
+            data.ids.forEach(id => {
+                params.append("ids", id);
+            })
+            fetch("/api/delete/?" + params.toString(), {
+                method: "DELETE",
+            }).then(res => res.json()).then(res => {
 
-            //add pagination element with a list a number of page in div with id "pagination"
-            const paginationElement = document.getElementById("pagination");
-            for(let i = 1; i <= res.totalPage; i++) {
-                const pageButton = document.createElement("button");
-                pageButton.innerText = i;
-                pageButton.addEventListener("click", () => {
-                    window.location.replace("/?pageNumber=" + i);
+                data.ids.forEach(id => {
+                    const row = document.getElementById("row-" + id);
+                    row.remove();
                 })
-                paginationElement.appendChild(pageButton);
-            }
-
-
-        })
-});
-
-    
-</script> -->
+            });
+        });
+    });
+</script>
 </body>
 </html>

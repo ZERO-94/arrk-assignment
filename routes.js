@@ -205,4 +205,30 @@ module.exports = function (app) {
         res.json(result);
       });
   });
+
+  app.delete("/api/delete", authHandler, function (req, res) {
+    const person = req.cookies.email;
+
+    console.log(req.query);
+
+    const messageRepository = new MessageRepository(connection);
+    if (req.query.action === "receiver") {
+      messageRepository
+        .deleteListOfEmailByReceiverEmail(person, req.query.ids)
+        .then((result) => {
+          console.log(result);
+          res.json(result);
+        });
+    } else if (req.query.action === "sender") {
+      messageRepository
+        .deleteListOfEmailBySenderEmail(person, req.query.ids)
+        .then((result) => {
+          console.log(result);
+          res.json(result);
+        });
+    } else {
+      //return 400 error
+      res.status(400).send("Bad request");
+    }
+  });
 };
