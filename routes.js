@@ -22,7 +22,17 @@ const authHandler = (req, res, next) => {
 
 module.exports = function (app) {
   app.get("/", authHandler, function (req, res) {
-    res.render("index.ejs", { list: res, email: req.cookies.email });
+    const receiver = req.cookies.email;
+    const messageRepository = new MessageRepository(connection);
+    messageRepository
+      .getEmailList(receiver, req.query.pageNumber, req.query.pageSize)
+      .then((result) => {
+        res.render("index.ejs", {
+          list: res,
+          email: req.cookies.email,
+          data: result,
+        });
+      });
   });
 
   app.get("/messages", authHandler, () => {
@@ -177,7 +187,13 @@ module.exports = function (app) {
   });
 
   app.get("/outbox", authHandler, function (req, res) {
-    res.render("outbox.ejs", { email: req.cookies.email });
+    const sender = req.cookies.email;
+    const messageRepository = new MessageRepository(connection);
+    messageRepository
+      .getEmailBySender(sender, req.query.pageNumber, req.query.pageSize)
+      .then((result) => {
+        res.render("outbox.ejs", { email: req.cookies.email, data: result });
+      });
   });
 
   app.get("/api/outbox", authHandler, function (req, res) {

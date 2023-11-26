@@ -16,20 +16,60 @@
     <a href="/compose-message">Compose message</a>
     <a href="/logout">Logout</a>
     <a href="/outbox">Outbox</a>
-    <table id="message-table">
-        <tr>
-            <th>Sender</th>
-            <th>Subject</th>
-            <th>Message</th>
-            <th>Send at</th>
-          </tr>
-    </table>
-    <div id="pagination"></div>
+    <%
+    if(typeof data !== "undefined" && data.items.length) {
+        const items = data.items;
+        %><table id="message-table">
+            <tr>
+                <th>Sender</th>
+                <th>Subject</th>
+                <th>Message</th>
+                <th>Send at</th>
+
+            </tr>
+        <%
+        for ( var i = 0; i < items.length; i++ )
+        {
+            %>
+                <tr>
+                    <td><%= items[i].sender %></td>
+                    <td>
+                        <a href="/message/<%= items[i].id %>"><%= items[i].subject %></a>
+                    </td>
+                    <td><%= items[i].message %></td>
+                    <td><%= Intl.DateTimeFormat(undefined, {
+                        timeStyle: "medium",
+                        dateStyle: "medium",
+                    }).format(new Date(items[i].sendAt)) %></td>
+
+                </tr>
+            <%
+        } %>
+        </table>
+        <%
+    }
+    %>
+    <%
+    if(typeof data !== "undefined" && data.totalPage) {
+        const totalPage = data.totalPage;
+        %><div id="pagination">
+        <%
+        for ( var i = 1; i <= totalPage; i++ )
+        {
+            %>
+            <a href="/?pageNumber=<%=i %>"><%=i %></a>
+            <%
+        } %>
+        </div>
+        <%
+    }
+    %>
+    
 
 
 </div>
 </div>
-<script>
+<!-- <script>
 
 document.addEventListener("DOMContentLoaded", (event) => {
   console.log("DOM fully loaded and parsed");
@@ -91,6 +131,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
 });
 
     
-</script>
+</script> -->
 </body>
 </html>
