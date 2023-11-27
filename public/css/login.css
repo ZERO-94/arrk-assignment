@@ -32,7 +32,7 @@ h1 {
     line-height: 2;
 }
 .btn {
-    background-color: rgb(46,147,139); /* Green */
+    background-color: rgb(46,147,139); 
     margin-top: 30px;
     margin-left: 110px;
     border: none;

@@ -20,7 +20,8 @@
         const items = data.items;
         %>
         <form id="delete-form">
-            <button type="submit">Delete</button>
+            <button type="submit" class = "delete-button" style="float: right;">Delete</button>
+            <br>
         <input name="deleteAction" value="receiver" hidden/>
         <table id="message-table">
             <tr>
@@ -38,7 +39,7 @@
                 <tr id="row-<%= items[i].id %>">
                     <td class = "checkbox"><input type="checkbox" id="<%= items[i].id %>" name="ids" value="<%= items[i].id %>"></td>
                     <td><%= items[i].sender %></td>
-                    <td>
+                    <td class="subject">
                         <a href="/message/<%= items[i].id %>"><%= items[i].subject %></a>
                     </td>
                     <td><%= items[i].message %></td>
