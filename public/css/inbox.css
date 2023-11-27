@@ -1,0 +1,60 @@
+body {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  padding-top: 180px;
+  background-image: url(../image/background.jpg);
+  background-position: center 0;
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+h1 {
+  text-align: center;
+}
+
+.container {
+  max-width: fit-content;
+  margin: auto;
+  background-color: rgb(46, 147, 139, 0.2);
+  padding: 100px 100px;
+  border: 1px solid rgb(46, 147, 139);
+}
+
+.nav {
+  text-align: center;
+}
+
+table {
+  border: 1px solid black;
+  table-layout: fixed;
+  width: 900px;
+}
+
+th,
+td {
+  border: 1px solid black;
+  width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.checkbox {
+  text-align: center;
+  vertical-align: middle;
+}
+a:link {
+  color: black;
+  text-decoration: none;
+}
+a:visited {
+  color: black;
+  text-decoration: none;
+}
+a:hover, a:active {
+  background-color: rgb(46, 147, 139);
+  color: white;
+}
+#pagination {
+  display: inline-block;
+  text-align: center;
+  margin: auto;
+}

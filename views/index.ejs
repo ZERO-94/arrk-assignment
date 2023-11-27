@@ -1,21 +1,20 @@
 <!doctype html>
 <html>
 <head>
-    <title>Node Authentication</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <title>Inbox</title>
+    <link rel="stylesheet" href="css/inbox.css">
     <style>
-        body         { padding-top:80px; }
     </style>
 </head>
 <body>
 <div class="container">
-<div class="col-sm-6 col-sm-offset-3">
 
     <h1>Hello <%= typeof fullName !== "undefiend" && fullName ? fullName : "" %>, this is your inbox</h1>
+    <div class = "nav">
     <a href="/compose-message">Compose message</a>
     <a href="/logout">Logout</a>
     <a href="/outbox">Outbox</a>
+    </div>
     <%
     if(typeof data !== "undefined" && data.items.length) {
         const items = data.items;
@@ -25,11 +24,11 @@
         <input name="deleteAction" value="receiver" hidden/>
         <table id="message-table">
             <tr>
-                <th></th>
-                <th>Sender</th>
-                <th>Subject</th>
-                <th>Message</th>
-                <th>Send at</th>
+                <th style="width:5%;"></th>
+                <th style="width:30%;">Sender</th>
+                <th style="width:30%;">Subject</th>
+                <th style="width:30%;">Message</th>
+                <th style="width:30%;">Send at</th>
 
             </tr>
         <%
@@ -37,7 +36,7 @@
         {
             %>
                 <tr id="row-<%= items[i].id %>">
-                    <td><input type="checkbox" id="<%= items[i].id %>" name="ids" value="<%= items[i].id %>"></td>
+                    <td class = "checkbox"><input type="checkbox" id="<%= items[i].id %>" name="ids" value="<%= items[i].id %>"></td>
                     <td><%= items[i].sender %></td>
                     <td>
                         <a href="/message/<%= items[i].id %>"><%= items[i].subject %></a>
@@ -72,9 +71,6 @@
     }
     %>
     
-
-
-</div>
 </div>
 
 <script>
