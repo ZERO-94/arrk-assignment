@@ -26,7 +26,6 @@
                 if(typeof emails !== "undefined" && emails) {
                     for ( var i = 0; i < emails.length; i++ )
                     {
-                        console.log(typeof(input) !== 'undefined' ? input.receiver : "ec");
                         const selected = typeof(input) !== 'undefined' && input.receiver === emails[ i ] ? 'selected' : '';
                         %><option class="form-control" value="<%=emails[ i ] %>" <%=selected %>><%=emails[ i ] %></option><%
                     }

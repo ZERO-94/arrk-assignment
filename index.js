@@ -7,7 +7,7 @@ require("dotenv").config();
 
 //set cookie
 app.use(cookieParser());
-
+app.use(express.static(__dirname + '/public'));
 //set view
 app.set("view engine", "ejs");
 

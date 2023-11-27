@@ -5,13 +5,9 @@ const MessageRepository = require("./repositories/MessageRepository");
 const connection = require("./db");
 const Message = require("./models/Message");
 const User = require("./models/User");
-const { name } = require("ejs");
-
 
 const authHandler = (req, res, next) => {
   const isAuth = !!req.cookies.email;
-  console.log("🚀 ~ file: routes.js:9 ~ authHandler ~ isAuth:", isAuth);
-
   if (!isAuth) {
     res.render("login.ejs");
   } else {
@@ -19,19 +15,27 @@ const authHandler = (req, res, next) => {
   }
 };
 
-//HTTP
-//GET -> không có body -> get view -> data có cần bảo mật không? -> data có dài không? -> cái request có create hay update data không? -> delete thì vẫn được dùng GET -> GET
-//POST -> có body
 
 module.exports = function (app) {
   app.get("/", authHandler, function (req, res) {
-    const userRepository = new UserRepository(connection)
-    userRepository.getNameByEmail(req.cookies.email).then((value) => {
-      const nameName = Object.values(value)
-      res.render("index.ejs", { list: res, email: req.cookies.email, fullName: nameName});
-    })
+    const receiver = req.cookies.email;
+    const messageRepository = new MessageRepository(connection);
+    messageRepository
+      .getEmailList(receiver, req.query.pageNumber, req.query.pageSize)
+      .then((result) => {
+        const userRepository = new UserRepository(connection);
+        userRepository.getNameByEmail(req.cookies.email). then ((value) => {
+        
+        res.render("index.ejs", {
+          list: res,
+          email: req.cookies.email,
+          data: result,
+          fullName: Object.values(value)
+        })
+      });
   });
- 
+});
+
   app.get("/signup", (req,res, next) => {
     res.render('signup')
   })
@@ -104,7 +108,7 @@ module.exports = function (app) {
         res.redirect("/");
       });
   });
-  
+
   app.get("/compose-message", authHandler, function (req, res) {
     const userRepository = new UserRepository(connection);
 
@@ -124,7 +128,6 @@ module.exports = function (app) {
     messageRepository
       .getEmailById(id)
       .then((result) => {
-        console.log("🚀 ~ file: routes.js:73 ~ .then ~ result:", result);
         res.render("messageDetail.ejs", { data: result });
       })
       .catch((err) => {
@@ -198,7 +201,6 @@ module.exports = function (app) {
             res.redirect("/");
           })
           .catch((err) => {
-            console.log("🚀 ~ file: routes.js:101 ~ err:", err);
             res.render("compose.ejs", {
               error: "Something went wrong",
               input: {
@@ -223,10 +225,16 @@ module.exports = function (app) {
   });
 
   app.get("/outbox", authHandler, function (req, res) {
-    const userRepository = new UserRepository(connection)
-    userRepository.getNameByEmail(req.cookies.email).then((value) => {
-      res.render("outbox.ejs", { list: res, email: req.cookies.email, fullName: Object.values(value)});
-    })    
+    const sender = req.cookies.email;
+    const messageRepository = new MessageRepository(connection);
+    messageRepository
+      .getEmailBySender(sender, req.query.pageNumber, req.query.pageSize)
+      .then((result) => {
+        const userRepository = new UserRepository(connection);
+        userRepository.getNameByEmail(req.cookies.email). then ((value) => {
+          res.render("outbox.ejs", { email: req.cookies.email, data: result, fullName: Object.values(value) });
+        })
+      });
   });
 
   app.get("/api/outbox", authHandler, function (req, res) {
@@ -237,5 +245,26 @@ module.exports = function (app) {
       .then((result) => {
         res.json(result);
       });
+  });
+
+  app.delete("/api/delete", authHandler, function (req, res) {
+    const person = req.cookies.email;
+    const messageRepository = new MessageRepository(connection);
+    if (req.query.action === "receiver") {
+      messageRepository
+        .deleteListOfEmailByReceiverEmail(person, req.query.ids)
+        .then((result) => {
+          res.json(result);
+        });
+    } else if (req.query.action === "sender") {
+      messageRepository
+        .deleteListOfEmailBySenderEmail(person, req.query.ids)
+        .then((result) => {
+          res.json(result);
+        });
+    } else {
+      //return 400 error
+      res.status(400).send("Bad request");
+    }
   });
 };

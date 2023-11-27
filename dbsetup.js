@@ -1,4 +1,3 @@
-//setup dotenv
 require("dotenv").config();
 
 const connection = require("./db");
@@ -18,39 +17,25 @@ function generateMessage() {
   return messages[Math.floor(Math.random() * messages.length)];
 }
 
-//create user table if not exists
 connection.query(
   "CREATE TABLE IF NOT EXISTS users (fullName VARCHAR(255), email VARCHAR(255) PRIMARY KEY, password VARCHAR(255))",
   (err, result) => {
     if (err) throw err;
-    console.log("User table created successfully");
-
-    //create message table if not exists with sender and reveiver as foreign key
-
     connection.query(
-      "CREATE TABLE IF NOT EXISTS messages (id INT AUTO_INCREMENT PRIMARY KEY, sender VARCHAR(255), receiver VARCHAR(255), subject TEXT, message TEXT, sendAt DATETIME, readAt DATETIME, FOREIGN KEY (sender) REFERENCES users(email), FOREIGN KEY (receiver) REFERENCES users(email))",
+      "CREATE TABLE IF NOT EXISTS messages (id INT AUTO_INCREMENT PRIMARY KEY, sender VARCHAR(255), receiver VARCHAR(255), subject TEXT, message TEXT, sendAt DATETIME, readAt DATETIME, receiverDeleted BOOLEAN NOT NULL default 0, senderDeleted BOOLEAN NOT NULL default 0, FOREIGN KEY (sender) REFERENCES users(email), FOREIGN KEY (receiver) REFERENCES users(email))",
       (err, result) => {
         if (err) throw err;
-        console.log("Message table created successfully");
-        //init 3 users with User class, one of them has the email address a@a.com
         const user1 = new User("John Doe", "john@a.com", "123456");
         const user2 = new User("Jane Doe", "jane@a.com", "123456");
         const user3 = new User("Bob Doe", "a@a.com", "123456");
-
-        //init UserRepository with connection
         const userRepository = new UserRepository(connection);
-
-        //create users with Promise all
         Promise.all([
           userRepository.createUser(user1),
           userRepository.createUser(user2),
           userRepository.createUser(user3),
         ])
           .then((result) => {
-            console.log("Users created successfully");
             const messageRepository = new MessageRepository(connection);
-
-            // Set up message data
             const messageData = [
               new Message(
                 user1.email,
@@ -121,7 +106,6 @@ connection.query(
               })
             )
               .then((result) => {
-                console.log("Messages created successfully");
                 process.exit();
               })
               .catch((err) => {
